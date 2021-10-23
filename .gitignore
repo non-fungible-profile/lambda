@@ -27,19 +27,3 @@ yarn.lock
 
 # dependencies
 .vscode
-
-# package-lock
-package-lock.json
-
-# Data
-/data/ipfs
-/data/postgres
-
-# Contract artifacts
-
-# Aqua smart contracts
-/mesa-smartcontracts
-/mesa-smart-contracts
-
-subgraph.yaml
-/generated
