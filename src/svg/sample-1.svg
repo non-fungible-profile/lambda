@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500">
+  <title>NFP {{tokenId}}</title>
+  <defs>
+    <style type="text/css">
+      #captionMD {
+        display: none;
+      }
+      #foregroundCircle {
+        r: 200px;
+      }
+      @media screen and (min-width: 420px) {
+        #foregroundCircle {
+          r: 220px;
+        }
+        #foregroundImage {
+          x: 30px;
+          y: 30px;
+          width: 440px;
+          height: 440px;
+        }
+        #caption {
+          display: none;
+        }
+        #captionMD {
+          display: block;
+        }
+      }
+    </style>
+    <clipPath id="circleView">
+      <circle id="foregroundCircle" cx="250" cy="250" r="225" fill="#fff" />
+    </clipPath>
+    <path d="M50,250c0-110.5,89.5-200,200-200s200,89.5,200,200s-89.5,200-200,200S50,360.5,50,250" id="circleText">
+      <animateTransform attributeName="transform" begin="0s" dur="30s" type="rotate" from="0 250 250" to="360 250 250" repeatCount="indefinite"/>
+    </path>
+  </defs>
+  <g>
+    <circle cx="250" cy="250" r="250" fill="#000" />
+    <text id="caption" dy="-15" fill="#fff" font-size="32">
+      <textPath xlink:href="#circleText">zett.eth | 3495 DAO Score</textPath>
+    </text>
+    <text id="captionMD" dy="-28" fill="#fff" font-size="24">
+      <textPath xlink:href="#circleText">zett.eth | 3495 DAO Score</textPath>
+    </text>
+  </g>
+  <g>
+    <image
+      id="foregroundImage"
+      x="50"
+      y="50"
+      width="400"
+      height="400"
+      clip-path="url(#circleView)"
+      xlink:href="https://lh3.googleusercontent.com/SbrM4s1z_VyaMcYb9UgVnLfDeA8IMtcTRPSjJMwUsnpZSC-83u-SU80fjGv_2nL1bDmJJ4ms6G-8wOlyFUrgfQI7vj8N7wbWM2a72vQ=w600"
+    />
+  </g>
+</svg>
