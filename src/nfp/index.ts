@@ -26,7 +26,9 @@ export interface TokenForeground {
 }
 export interface Token {
   tokenId: string;
-  owner: string;
+  owner: {
+    id: string;
+  };
   foreground: TokenForeground;
   contract: string;
 }
@@ -44,9 +46,14 @@ export async function getToken(tokenId: string): Promise<Token> {
         tokenId: "${tokenId}"
       }) {
         tokenId
-        owner
-        contract
-        foreground
+        owner {
+          id
+        }
+        uri
+        foreground {
+          id
+          tokenAddress
+        }
       }`);
 
   return data.token;

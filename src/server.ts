@@ -13,7 +13,7 @@ export const server = Express();
 export async function getTokenSVG(tokenId: string): Promise<string> {
   // Query the current owner from subgraph
   const token = await getToken(tokenId);
-  const daoScore = await calculateAddressScore(token.owner);
+  const daoScore = await calculateAddressScore(token.owner.id);
 
   let foregroundImageUrl;
 
