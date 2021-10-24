@@ -21,7 +21,7 @@ export interface OpenSeaAsset extends Asset {
   description: string;
   imageUrl: string;
   imagePreviewUrl: string;
-  imageUrlOriginal: string;
+  image_original_url: string;
   imageUrlThumbnail: string;
   openseaLink: string;
   externalLink: string;
@@ -33,5 +33,6 @@ export async function getOpenSeaAsset({ tokenAddress, tokenId }: GetOpenSeaAsset
   const { data } = await axios.get<OpenSeaAsset>(
     `https://api.opensea.io/api/v1/asset/${tokenAddress}/${tokenId || 0}/`
   );
+  console.log(data);
   return data;
 }
