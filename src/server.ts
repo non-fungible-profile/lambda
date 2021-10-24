@@ -1,20 +1,10 @@
 import Express from 'express';
 
-import { calculateAddressScore, getSeaPort, getToken, TokenForeground } from './nfp';
+import { calculateAddressScore, getToken } from './nfp';
+import { getOpenSeaAsset } from './nfp/seaport';
 import { buildSVGString } from './nfp/nfp-svg';
 
 export const server = Express();
-
-export async function getTokenForegroundTokenUri({ tokenAddress, tokenId }: TokenForeground): Promise<string> {
-  const seaport = await getSeaPort();
-
-  const asset = await seaport.api.getAsset({
-    tokenAddress,
-    tokenId,
-  });
-
-  return asset.imageUrlOriginal;
-}
 
 /**
  * Generates and return a token string
@@ -24,7 +14,22 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
   // Query the current owner from subgraph
   const token = await getToken(tokenId);
   const daoScore = await calculateAddressScore(token.owner);
-  const foregroundImageUrl = await getTokenForegroundTokenUri(token.foreground);
+
+  let foregroundImageUrl;
+
+  {
+    const { tokenAddress, tokenId } = token.foreground;
+
+    if (tokenId != '' && tokenAddress != '') {
+      // get foreground if any
+      const { imageUrlOriginal } = await getOpenSeaAsset({
+        tokenAddress,
+        tokenId,
+      });
+
+      foregroundImageUrl = imageUrlOriginal;
+    }
+  }
 
   return buildSVGString({
     bannerText: `${daoScore} DAOScore`,
