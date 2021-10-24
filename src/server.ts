@@ -59,8 +59,8 @@ server.get('/:tokenId', async function generateNFP(req, res) {
     const cachedItem = cacheNFPMap.get(tokenId);
     const diff = Math.abs(dayjs().diff(cachedItem?.createdAt));
 
-    if (cachedItem && diff > 180) {
-      res.send(cachedItem.uri).end();
+    if (cachedItem && diff < 180) {
+      return res.send(cachedItem.uri).end();
     }
 
     const generatedNFP = await getTokenSVG(tokenId);
