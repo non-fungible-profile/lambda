@@ -13,7 +13,7 @@ export const VOTE_WEIGHT = 69;
 export const PROPOSAL_WEIGHT = 420;
 
 export async function queryNonFungibleProfileSubgraph<T = any>(query: string) {
-  const { data } = await axios.post<T>(process.env.SNAPSHOT_GRAPHQL_ENDPOINT as string, {
+  const { data } = await axios.post<T>(process.env.SUBGRAPH_ENDPOINT as string, {
     query,
   });
 
@@ -39,13 +39,14 @@ export interface FetchTokenResponse {
   };
 }
 
-export async function getToken(tokenId: string): Promise<Token> {
+export async function getToken(tokenId: number): Promise<Token> {
+  const tokenIdHexString = `0x${Number(tokenId).toString(16)}`;
+  console.log({ tokenIdHexString });
   // Query the current owner from subgraph
-  const { data } = await queryNonFungibleProfileSubgraph<FetchTokenResponse>(`
-      token (where: {
-        tokenId: "${tokenId}"
-      }) {
-        tokenId
+  const res = await queryNonFungibleProfileSubgraph<FetchTokenResponse>(`
+    {
+      token(id: "${tokenIdHexString}") {
+        id
         owner {
           id
         }
@@ -54,9 +55,12 @@ export async function getToken(tokenId: string): Promise<Token> {
           id
           tokenAddress
         }
-      }`);
+      }
+    }`);
 
-  return data.token;
+  console.log(JSON.stringify(res, null, 2));
+
+  return res.data.token;
 }
 
 export interface CalculateResponseScore {
