@@ -1,9 +1,9 @@
 import Express from 'express';
+import dayjs from 'dayjs';
 
 import { calculateAddressScore, getToken } from './nfp';
 import { getOpenSeaAsset } from './nfp/seaport';
 import { buildSVGString } from './nfp/nfp-svg';
-import dayjs from 'dayjs';
 
 export const server = Express();
 
@@ -32,12 +32,21 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
 
     if (tokenId != '' && tokenAddress != '') {
       // get foreground if any
-      const { image_original_url } = await getOpenSeaAsset({
+      getOpenSeaAsset({
         tokenAddress,
         tokenId,
-      });
-      console.log({ image_original_url });
-      foregroundImageUrl = image_original_url;
+      })
+        .then(({ image_original_url }) => {
+          console.log({ image_original_url });
+          foregroundImageUrl = image_original_url;
+        })
+        .catch(error => {
+          if (error.statusCode == 404) {
+            console.log(`OpenSea asset could not be found for token #${tokenId} on contract ${tokenAddress}`);
+          } else {
+            console.log(error);
+          }
+        });
     }
   }
 
