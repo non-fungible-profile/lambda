@@ -1,6 +1,4 @@
 // @ts-ignore
-import { OpenSeaPort, Network } from 'opensea-js';
-import Web3 from 'web3';
 import axios from 'axios';
 import {
   getProposalsAuthoredByAddress,
@@ -20,13 +18,6 @@ export async function queryNonFungibleProfileSubgraph<T = any>(query: string) {
   });
 
   return data;
-}
-
-export async function getSeaPort() {
-  const provider = new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT as string);
-  return new OpenSeaPort(provider, {
-    networkName: Network.Main,
-  });
 }
 
 export interface TokenForeground {
