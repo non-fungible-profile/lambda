@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { getLogger } from 'log4js';
+import debugfactory from 'debug';
 
-export const logger = getLogger('snapshot');
+export const debug = debugfactory('snapshot');
+export const debugVerbose = debugfactory('snapshot:verbose');
 
 export interface GraphQLResponse<ReturnType> {
   data: ReturnType;
@@ -50,7 +51,7 @@ export async function querySnapshotGraph<T = any>(query: string) {
  * @returns
  */
 export async function getSpacesAddressIsMemberIn(address: string): Promise<Space[]> {
-  logger.info(`Getting spaces`);
+  debug(`Getting spaces`);
   const { data } = await querySnapshotGraph<QueryAllSpaces>(`{
         spaces(first: 100000, skip: 0) {
           members
@@ -73,11 +74,11 @@ export async function getSpacesAddressIsMemberIn(address: string): Promise<Space
         }
       }`);
 
-  logger.info(`Found ${data.spaces.length} spaces`);
+  debug(`Found ${data.spaces.length} spaces`);
 
   const spacesAddressIsMemberIn = data.spaces.filter(space => {
     const isMember = space.members.includes(address);
-    logger.debug(`Spaces ${space.name} (${space.id}) includes ${address} | ${isMember}`);
+    debugVerbose(`space ${space.name} (${space.id}) includes ${address} | ${isMember}`);
     return isMember;
   });
 
@@ -116,7 +117,7 @@ export type QueryGetProposalsAuthoredByAddressProposal = GraphQLResponse<{
  * @param address
  */
 export async function getProposalsAuthoredByAddress(address: string): Promise<Proposal[]> {
-  logger.info(`Getting proposals authored by ${address}`);
+  debug(`Getting proposals authored by ${address}`);
   const { data } = await querySnapshotGraph<QueryGetProposalsAuthoredByAddressProposal>(`{
       proposals (first: 50000, skip: 0, where: {
         author: "${address}"
@@ -141,7 +142,7 @@ export async function getProposalsAuthoredByAddress(address: string): Promise<Pr
         link
       }
     }`);
-  logger.info(`Found ${data.proposals.length} proposals authored by ${address}`);
+  debug(`Found ${data.proposals.length} proposals authored by ${address}`);
 
   return data.proposals;
 }
@@ -172,7 +173,7 @@ export type QueryGetVotesCastedByAddress = GraphQLResponse<{
  * @param address
  */
 export async function getVotesCastedByAddress(address: string): Promise<Vote[]> {
-  logger.info(`Found votes casted by ${address}`);
+  debug(`Found votes casted by ${address}`);
   const { data } = await querySnapshotGraph<QueryGetVotesCastedByAddress>(`{
       votes (first: 100000, skip: 0, where: {
         voter: "${address}"
@@ -194,7 +195,7 @@ export async function getVotesCastedByAddress(address: string): Promise<Vote[]> 
       }
     }`);
 
-  logger.info(`Found ${data.votes.length} votes casted by ${address}`);
+  debug(`Found ${data.votes.length} votes casted by ${address}`);
 
   return data.votes;
 }

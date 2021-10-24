@@ -1,4 +1,7 @@
+import debugfactory from 'debug';
 import axios from 'axios';
+
+export const debug = debugfactory('opensea');
 
 export interface GetOpenSeaAssetParams {
   tokenAddress: string;
@@ -33,6 +36,6 @@ export async function getOpenSeaAsset({ tokenAddress, tokenId }: GetOpenSeaAsset
   const { data } = await axios.get<OpenSeaAsset>(
     `https://api.opensea.io/api/v1/asset/${tokenAddress}/${tokenId || 0}/`
   );
-  console.log(data);
+  debug(data);
   return data;
 }

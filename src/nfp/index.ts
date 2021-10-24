@@ -1,4 +1,5 @@
 // @ts-ignore
+import debugfactory from 'debug';
 import axios from 'axios';
 import {
   getProposalsAuthoredByAddress,
@@ -9,6 +10,7 @@ import {
   Vote,
 } from '../sources/snapshot';
 
+const nfpDebug = debugfactory('nfp');
 export const VOTE_WEIGHT = 69;
 export const PROPOSAL_WEIGHT = 420;
 
@@ -41,7 +43,7 @@ export interface FetchTokenResponse {
 
 export async function getToken(tokenId: number): Promise<Token> {
   const tokenIdHexString = `0x${Number(tokenId).toString(16)}`;
-  console.log({ tokenIdHexString });
+  nfpDebug({ tokenIdHexString });
   // Query the current owner from subgraph
   const res = await queryNonFungibleProfileSubgraph<FetchTokenResponse>(`
     {
@@ -58,7 +60,7 @@ export async function getToken(tokenId: number): Promise<Token> {
       }
     }`);
 
-  console.log(JSON.stringify(res, null, 2));
+  nfpDebug(JSON.stringify(res, null, 2));
 
   return res.data.token;
 }

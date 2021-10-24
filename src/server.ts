@@ -1,10 +1,12 @@
+import debugfactory from 'debug';
 import Express from 'express';
 import dayjs from 'dayjs';
-
 import { calculateAddressScore, getToken } from './nfp';
 import { getOpenSeaAsset } from './nfp/seaport';
 import { buildSVGString } from './nfp/nfp-svg';
 
+const httpDebug = debugfactory('http');
+const nfpDebug = debugfactory('nfp');
 export const server = Express();
 
 export interface NFPCacheItem {
@@ -24,7 +26,6 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
   // @ts-ignore
   const token = await getToken(tokenId);
   const daoScore = await calculateAddressScore(token.owner.id);
-
   let foregroundImageUrl;
 
   if (token.foreground != null) {
@@ -37,14 +38,14 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
         tokenId,
       })
         .then(({ image_original_url }) => {
-          console.log({ image_original_url });
+          nfpDebug({ image_original_url });
           foregroundImageUrl = image_original_url;
         })
         .catch(error => {
           if (error.statusCode == 404) {
-            console.log(`OpenSea asset could not be found for token #${tokenId} on contract ${tokenAddress}`);
+            nfpDebug(`OpenSea asset could not be found for token #${tokenId} on contract ${tokenAddress}`);
           } else {
-            console.log(error);
+            nfpDebug(error);
           }
         });
     }
@@ -61,6 +62,7 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
 
 server.get('/:tokenId', async function generateNFP(req, res) {
   const { tokenId } = req.params;
+  httpDebug(`tokenId `, req.params);
   try {
     // Send an SVG regardless
     res.setHeader('Content-Type', 'image/svg+xml');
@@ -74,15 +76,17 @@ server.get('/:tokenId', async function generateNFP(req, res) {
 
     const generatedNFP = await getTokenSVG(tokenId);
 
+    httpDebug(`Saving token #${tokenId} to memory cache`);
     cacheNFPMap.set(tokenId, {
       createdAt: dayjs().unix(),
       uri: generatedNFP,
       tokenId,
     });
+    httpDebug(`Saved token #${tokenId} to memory cache`);
 
     res.send(generatedNFP).end();
   } catch (error) {
-    console.error(error);
+    httpDebug(`Error memory `, error);
     res.status(404).send().end();
   }
 });
