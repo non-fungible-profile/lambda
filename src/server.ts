@@ -32,19 +32,19 @@ export async function getTokenSVG(tokenId: string): Promise<string> {
 
     if (tokenId != '' && tokenAddress != '') {
       // get foreground if any
-      const { imageUrlOriginal } = await getOpenSeaAsset({
+      const { image_original_url } = await getOpenSeaAsset({
         tokenAddress,
         tokenId,
       });
-
-      foregroundImageUrl = imageUrlOriginal;
+      console.log({ image_original_url });
+      foregroundImageUrl = image_original_url;
     }
   }
 
-  const shortAddress = `${token.owner.id.substr(0, 6)}...${token.owner.id.substr(-4)}`;
+  const shortAddress = `${token.owner.id.substr(0, 6)} ... ${token.owner.id.substr(-4)}`;
 
   return buildSVGString({
-    bannerText: `${shortAddress} | ${daoScore.score} DAOScore`,
+    bannerText: `${shortAddress} • ${daoScore.score} DAOScore`,
     tokenId,
     foregroundImageUrl,
   });
