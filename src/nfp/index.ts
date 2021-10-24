@@ -1,4 +1,6 @@
 // @ts-ignore
+import { OpenSeaPort, Network } from 'opensea-js';
+import Web3 from 'web3';
 import axios from 'axios';
 import {
   getProposalsAuthoredByAddress,
@@ -7,7 +9,7 @@ import {
   Proposal,
   Space,
   Vote,
-} from './sources/snapshot';
+} from '../sources/snapshot';
 
 export const VOTE_WEIGHT = 69;
 export const PROPOSAL_WEIGHT = 420;
@@ -20,17 +22,27 @@ export async function queryNonFungibleProfileSubgraph<T = any>(query: string) {
   return data;
 }
 
+export async function getSeaPort() {
+  const provider = new Web3.providers.HttpProvider(process.env.INFURA_ENDPOINT as string);
+  return new OpenSeaPort(provider, {
+    networkName: Network.Main,
+  });
+}
+
+export interface TokenForeground {
+  tokenId: string;
+  tokenAddress: string;
+}
 export interface Token {
   tokenId: string;
   owner: string;
+  foreground: TokenForeground;
+  contract: string;
 }
 
 export interface FetchTokenResponse {
   data: {
-    token: {
-      tokenId: string;
-      owner: string;
-    };
+    token: Token;
   };
 }
 
@@ -42,6 +54,8 @@ export async function getToken(tokenId: string): Promise<Token> {
       }) {
         tokenId
         owner
+        contract
+        foreground
       }`);
 
   return data.token;
